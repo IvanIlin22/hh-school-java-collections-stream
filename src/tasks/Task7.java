@@ -16,8 +16,9 @@ public class Task7 implements Task {
 
   private Set<String> vacancyNames(Collection<Company> companies) {
   
-    return companies.stream().map(c -> c.getVacancies()).
-        flatMap(v -> v.stream().map(t->t.getTitle())).
+    return companies.stream().map(Company::getVacancies).
+        flatMap(Collection::stream).
+        map(Vacancy::getTitle).
         collect(Collectors.toSet());
   }
 
