@@ -4,9 +4,7 @@ import common.Person;
 import common.PersonService;
 import common.Task;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -17,21 +15,23 @@ import java.util.stream.Collectors;
 Оценить асимпотику работы
  */
 public class Task1 implements Task {
-
+  
   // !!! Редактируйте этот метод !!!
+  //O(n) асимптотика работы
   private List<Person> findOrderedPersons(List<Integer> personIds) {
     Set<Person> persons = PersonService.findPersons(personIds);
-    return Collections.emptyList();
+    Map<Integer, Person> mapPerson = persons.stream().collect(Collectors.toMap(Person::getId, person -> person));
+    
+    return personIds.stream().map(id -> mapPerson.get(id)).collect(Collectors.toList());
   }
-
+  
   @Override
   public boolean check() {
     List<Integer> ids = List.of(1, 2, 3);
-
+    
     return findOrderedPersons(ids).stream()
         .map(Person::getId)
         .collect(Collectors.toList())
         .equals(ids);
   }
-
 }

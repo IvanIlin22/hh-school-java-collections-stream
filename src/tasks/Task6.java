@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /*
 Имеются
@@ -23,18 +25,24 @@ public class Task6 implements Task {
   private Set<String> getPersonDescriptions(Collection<Person> persons,
                                             Map<Integer, Set<Integer>> personAreaIds,
                                             Collection<Area> areas) {
-    return new HashSet<>();
+
+    Map<Integer, String> areasIdNameMap = areas.stream().collect(Collectors.toMap(Area::getId, Area::getName));
+    
+    return persons.stream().flatMap(person -> personAreaIds.get(person.getId()).
+        stream().map(idArea -> person.getFirstName() + " - " + areasIdNameMap.get(idArea))).
+        collect(Collectors.toSet());
   }
 
   @Override
   public boolean check() {
     List<Person> persons = List.of(
         new Person(1, "Oleg", Instant.now()),
-        new Person(2, "Vasya", Instant.now())
+        new Person(2, "Vasya", Instant.now()),
+        new Person(3, "Oleg", Instant.now())
     );
-    Map<Integer, Set<Integer>> personAreaIds = Map.of(1, Set.of(1, 2), 2, Set.of(2, 3));
+    Map<Integer, Set<Integer>> personAreaIds = Map.of(1, Set.of(1, 2), 2, Set.of(2, 3), 3, Set.of(1, 3));
     List<Area> areas = List.of(new Area(1, "Moscow"), new Area(2, "Spb"), new Area(3, "Ivanovo"));
     return getPersonDescriptions(persons, personAreaIds, areas)
-        .equals(Set.of("Oleg - Moscow", "Oleg - Spb", "Vasya - Spb", "Vasya - Ivanovo"));
+        .equals(Set.of("Oleg - Moscow", "Oleg - Spb", "Vasya - Spb", "Vasya - Ivanovo", "Oleg - Ivanovo"));
   }
 }
